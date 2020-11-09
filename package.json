@@ -1,0 +1,24 @@
+{
+  "name": "learning-service",
+  "version": "1.0.0",
+  "author": "Tomas Luna <tomas.luna@adomicilio-sa.com>",
+  "license": "MIT",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon --watch src app.js",
+    "test": "standard"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.5.0",
+    "express": "^4.7.1",
+    "hash-generator": "^0.1.0",
+    "method-override": "^2.1.2",
+    "redis": "3.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6",
+    "standard": "^11.0.1"
+  }
+}
