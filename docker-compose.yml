@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+    learning-center:
+        image: learning-service:1.0.0
+        ports:
+            - "3000:3000"
+        volumes: 
+            - .:/home/node/app
+
+    redis-server:
+        image: redis:6.0.9
