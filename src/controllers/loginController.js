@@ -1,4 +1,5 @@
-var loginService = require('../services/loginService');
+var loginService = require('../services/loginService'),
+    {ValidationError, InternalError} = require('../errors/customErrors');
 
 exports.register = async function(req,res,next){
     try{
@@ -14,6 +15,10 @@ exports.login = async function(req,res,next){
         let userData = await loginService.login(req.body);
         res.status(200).json(userData);
     }catch(err){
-        next(new Error(err));
+        if(err instanceof InternalError){
+            next(new Error(err));
+        }else{
+            next(new ValidationError("Usuario y/o clave incorrectos"));
+        }
     }    
 }

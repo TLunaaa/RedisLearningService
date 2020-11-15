@@ -12,16 +12,18 @@ var fmt = require('util').format;
 var formats = {
   client: 'clients:%s', //The application wanting to have access to your resources
   token: 'tokens:%s',
-  user: 'users:%s' //The person wanting to use your resources on the Client
+  user: 'users:%s', //The person wanting to use your resources on the Client
+  refreshToken: 'refresh_tokens:%s'
 };
 
 /**
  * Get access token.
+ * Invoked to retrieve an existing access token previously saved through Model#saveToken().
  */
 
 module.exports.getAccessToken = function(bearerToken) {
   return redis_client.hgetall(fmt(formats.token, bearerToken))
-    .then(function(token) {
+    .then( (token) => {
       if (!token) {
         return;
       }
@@ -53,30 +55,12 @@ module.exports.getClient = function(clientId, clientSecret) {
     });
 };
 
-/**
- * Get refresh token.
- */
-
-module.exports.getRefreshToken = function(bearerToken) {
-  return redis_client.hgetall(fmt(formats.token, bearerToken))
-    .then(function(token) {
-      if (!token) {
-        return;
-      }
-
-      return {
-        clientId: token.clientId,
-        expires: token.refreshTokenExpiresOn,
-        refreshToken: token.accessToken,
-        userId: token.userId
-      };
-    });
-};
 
 /**
  * Get user.
+ * Invoked to retrieve a user using a username/password combination.
  */
-/*
+
 module.exports.getUser = function(username, password) {
   return redis_client.hgetall(fmt(formats.user, username))
     .then(function(user) {
@@ -88,10 +72,12 @@ module.exports.getUser = function(username, password) {
         id: username
       };
     });
-};*/
+};
 
 /**
  * Save token.
+ * Invoked to save an access token and optionally a refresh token, depending on the grant type.
+ * Used by OAuth2Server.token()
  */
 
 module.exports.saveToken = function(token, client, user) {

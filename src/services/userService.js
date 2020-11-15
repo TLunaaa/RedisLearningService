@@ -1,14 +1,31 @@
-var {redis_client} = require('../dao/redisDB'),
-    { promisify } = require('util'),
-    createHash = require('hash-generator');
+const createHash = require('hash-generator'),
+    userRepository = require('../dao/userRepository'),
+    workspaceRepository = require('../dao/workspaceRepository');
 
-exports.createWorkspace = async function(workspaceData,user){
+exports.saveUserData = function(userData){
+    console.log("Saving user data");
+    return userRepository.saveUserData(userData);
+}
+
+exports.createWorkspace = async function(user){
     console.log("Creating new workspace");
     let workspaceHash = createHash(8);
-    await (redis_client.rpush).bind(redis_client)('user:' + user +':workspaces',workspaceHash);
-    return workspaceHash;
+    await Promise.all([
+        userRepository.saveUserWorkspace(user,workspaceHash),
+        workspaceRepository.saveWorkspaceString(workspaceHash,'hello','world')
+    ]);
 }
 
 exports.addWorkspace = async function(workSpaceData,user){
-    await (redis_client.rpush).bind(redis_client)('user:' + user +':workspaces',workspaceData.workspace );
+    await userRepository.saveUserWorkspace(user,workSpaceData.workspace);
+}
+
+exports.getUserData = function(userData){
+    return userRepository.findUserDataById(userData);
+}
+
+exports.shareWorkspace = function(owner, guest, workspaceData){
+    //verificar que exista el workspace
+    //verificar que exista el owner y el guest
+    //agregar el workspace al guest
 }
