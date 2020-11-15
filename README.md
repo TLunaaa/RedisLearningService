@@ -1,2 +1,4 @@
-# TPBDII-BackEnd
-TP Final Bases de Datos II
+# TP Final Bases de Datos II
+
+Desarrollo de un entorno de aprendizaje de base de datos, mediante la web.
+
