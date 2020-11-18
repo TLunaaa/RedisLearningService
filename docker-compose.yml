@@ -4,7 +4,7 @@ services:
     learning-center:
         image: learning-service:1.0.0
         ports:
-            - "3000:3000"
+            - "3001:3000"
         volumes: 
             - .:/home/node/app
 
