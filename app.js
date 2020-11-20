@@ -2,6 +2,7 @@ const express = require("express"),
       bodyParser = require('body-parser'),
       userRouter = require('./src/routes/userRoutes'),
       loginRouter = require('./src/routes/loginRouter'),
+      workspaceRouter = require('./src/routes/workspaceRouter'),
       oauthServer = require('oauth2-server'),
       { promisify } = require('util');
 
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
 
 app.use('/',loginRouter);
 app.use('/users',userRouter);
+app.use('/workspaces',workspaceRouter);
 
 app.use((err,req,res,next) => {
   res.status(400).json({message: err.message }).end();

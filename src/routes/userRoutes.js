@@ -3,6 +3,8 @@ var router = express.Router();
 
 var userController = require('../controllers/userController');
 
-router.post('/workspace',userController.createWorkspace);
+router.get('/:username/workspaces',userController.getWorkspaces);
+
+router.patch('/:username/workspaces',userController.createWorkspace);
 
 module.exports = router;
