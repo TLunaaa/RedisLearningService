@@ -1,44 +1,39 @@
-var { promisify } = require('util'),
-    { rediscli } = require('../dao/redisDB'),
-    bcrypt = require('bcrypt'),
+var bcrypt = require('bcrypt'),
     userService = require('../services/userService'),
-    {InternalError} = require('../errors/customErrors');
+    {InternalError,ValidationError} = require('../errors/customErrors');
 
 const BCRYPT_SALT_ROUNDS = 12;
 
 //Creates a new user if the username it's not taken yet, and saves user data.
 exports.register = async (data) => {    
-    let userExists = await promisify(rediscli.exists).bind(rediscli)('user:' + data.user + ':login');
-    if(userExists === 1){
+    let userExists = await userService.verifyUser(data.user);
+    if(userExists){
         console.error("LoginService - Usuario existente")
-        throw new Error("Usuario existente");
+        throw new ValidationError("Usuario existente");
     }
     bcrypt.hash(data.password, BCRYPT_SALT_ROUNDS)
-        .then(hashedPassword => promisify(rediscli.set).bind(rediscli)('user:' + data.user +':login',hashedPassword))
+        .then(hashedPassword => userService.saveUserPassword(data.user,hashedPassword))
         .then(reply => {
-            if(reply != null){
-                userService.saveUserData(data);
-                console.log("user data saved");
-                userService.createWorkspace(data.user);
-                console.log("LoginService - Nuevo usuario registrado")
+            if(reply == null){
+                throw new Error();
             }
+            userService.createUser(data);
         })
         .catch(e => {
             console.error("LoginService - Error al registrar al usuario");
-            throw new Error("Error al registrar al usuario");
+            throw new InternalError("Error al registrar al usuario");
         }) 
 
 }
 
 //Check if the loggin credentials are OK.
 exports.login = async (data) => {
-    let hashedPassword = await promisify(rediscli.get).bind(rediscli)('user:' + data.user +':login');
+    let hashedPassword = await userService.getUserPassword(data.user);
     return bcrypt.compare(data.password,hashedPassword)
         .then(function(isCorrect){
-            console.log(isCorrect);
             if(!isCorrect){
                 console.error("LoginService - Error en la autenticacion");
-                throw new Error();
+                throw new ValidationError();
             }
             console.log("Obteniendo datos del usuario " + data.user)
             return userService.getUserData(data.user);
