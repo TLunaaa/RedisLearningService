@@ -19,3 +19,12 @@ exports.createWorkspace = async function(req,res,next){
         next(new Error(err));
     }
 }
+
+exports.userQueriesCounter = async function(req,res,next){
+    try{
+        let count = await userService.getCounter(req.params.username);
+        res.status(200).json(count);
+    }catch(err){
+        next(new Error(err));
+    }
+}

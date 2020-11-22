@@ -84,6 +84,15 @@ exports.decreaseUserQueriesCounter = function(user){
     return promisify(rediscli.decr).bind(rediscli)('user:' + user + ':queries:count');
 }
 
+/**
+ * Retrieves user queries counter
+ * @param {string} user 
+ * @returns Promise(err,reply)
+ */
+exports.getUserQueriesCounter = function(user){
+    return promisify(rediscli.get).bind(rediscli)('user:' + user + ':queries:count');
+}
+
 exports.saveSharedworkspace = function(user,workspaceHash){
     //save shared workspace separatelly 
 }
