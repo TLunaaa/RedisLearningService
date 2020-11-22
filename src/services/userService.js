@@ -60,8 +60,26 @@ exports.getUserWorkspaces = async function(userId){
     return userRepository.findAllWorkspacesByUserId(userId);
 }
 
+exports.isUserWorkspace = async function(userId,workspaceId){
+    let workspaces = await userRepository.findAllWorkspacesByUserId(userId);
+    if(workspaces == null || workspaces.length > 1){
+        throw new Error("User " + userId + " hasn't got any workspace");
+    }
+    return workspaces.includes(workspaceId);
+}
+
+exports.getCounter = function(userId){
+    return userRepository.getUserQueriesCounter(userId);
+}
+
 exports.decreaseCounter = function(userId){
-    return userRepository.decreaseUserQueriesCounter(userId);
+
+    return userRepository.decreaseUserQueriesCounter(userId)
+        .then(reply => {
+            if(reply < 0){
+                throw new Error('No more queries left')
+            }
+        }) 
 }
 
 exports.shareWorkspace = function(owner, guest, workspaceData){
