@@ -2,11 +2,21 @@ version: '3'
 
 services:
     learning-center:
-        image: learning-service:1.0.0
+        build: .
+        depends_on:
+            - redis-server
         ports:
             - "3001:3000"
-        volumes: 
-            - .:/home/node/app
+        environment: 
+            - NODE_PORT=3000
+            - REDIS_HOST=redis-server
+            - REDIS_PORT=6379
+
 
     redis-server:
         image: redis:6.0.9
+        volumes: 
+            - redis-data:/data
+
+volumes: 
+    redis-data:

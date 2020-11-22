@@ -1,8 +1,8 @@
 const redis = require('redis');
 
 var rediscli = redis.createClient({
-    host: '172.17.0.2',
-    port: 6379
+    host: process.env.REDIS_HOST || "172.168.0.2",
+    port: process.env.REDIS_PORT || "6379"
 });
 
 rediscli.on("error", function(error) {
