@@ -7,7 +7,9 @@ exports.createWorkspace = (workspaceHash, key, value) => {
 
 exports.executeQuery = async (workspaceId,userId,queryData) => {
     var result;
-    userService.isUserWorkspace(userId,workspaceId);
+    if(!userService.isUserWorkspace(userId,workspaceId)){
+        throw new Error("This user is not allowed to query in this workspace");
+    }
     await userService.decreaseCounter(userId);
     switch (queryData.operation) {
         case "set": 
@@ -25,6 +27,9 @@ exports.executeQuery = async (workspaceId,userId,queryData) => {
             result = await deleteKey(workspaceId,queryData.key);
             break;
     }
+    await userService.saveQuery(userId,workspaceId,
+        queryData.operation + " " + queryData.key + " " + queryData.value,
+        result)
     return result;
 }
 
