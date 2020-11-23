@@ -28,3 +28,20 @@ exports.userQueriesCounter = async function(req,res,next){
         next(new Error(err));
     }
 }
+
+exports.userHistory = async function(req,res,next){
+    try{
+        let historyList;
+        if(req.query.workspaceId != null){
+            historyList = await userService.getUserHistoryByWorkspaceId(req.params.username,req.query.workspaceId);
+        }else{
+            historyList = await userService.getAllUserHistory(req.params.username);
+        }
+        let converted = historyList.map(function(element){
+            return JSON.parse(element);
+        })
+        res.status(200).json(converted);
+    }catch(err){parse
+        next(new Error(err));
+    }
+}

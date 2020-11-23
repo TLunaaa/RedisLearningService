@@ -68,18 +68,37 @@ exports.isUserWorkspace = async function(userId,workspaceId){
     return workspaces.includes(workspaceId);
 }
 
+exports.saveQuery = async function(userId,workspaceId,query,result){
+    let history = {
+        query: query,
+        result: result,
+        workspace: workspaceId
+    }
+    await userRepository.saveUserQuery(userId,JSON.stringify(history));
+}
+
 exports.getCounter = function(userId){
     return userRepository.getUserQueriesCounter(userId);
 }
 
 exports.decreaseCounter = function(userId){
-
     return userRepository.decreaseUserQueriesCounter(userId)
         .then(reply => {
             if(reply < 0){
                 throw new Error('No more queries left')
             }
         }) 
+}
+
+exports.getAllUserHistory = function(userId){
+    return userRepository.getUserHistory(userId);
+}
+
+exports.getUserHistoryByWorkspaceId = async function(userId,workspaceId){
+    let history = await userRepository.getUserHistory(userId);
+    return history.filter((element) => {
+        return JSON.parse(element).workspace == workspaceId
+    });
 }
 
 exports.shareWorkspace = function(owner, guest, workspaceData){

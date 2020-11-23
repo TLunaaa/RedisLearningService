@@ -93,6 +93,25 @@ exports.getUserQueriesCounter = function(user){
     return promisify(rediscli.get).bind(rediscli)('user:' + user + ':queries:count');
 }
 
+/**
+ * Saves user history
+ * @param {string} user 
+ * @param {JSON} jsonObject 
+ * @returns Promise(err,list.length)
+ */
+exports.saveUserQuery = function(user,jsonObject){
+    return promisify(rediscli.rpush).bind(rediscli)(['user:' + user + ':queries:history',jsonObject])
+}
+
+/**
+ * Retrieves user history
+ * @param {string} user 
+ * @returns Promise(err,list)
+ */
+exports.getUserHistory = function(user){
+    return promisify(rediscli.lrange).bind(rediscli)('user:' + user + ':queries:history',0,-1);
+}
+
 exports.saveSharedworkspace = function(user,workspaceHash){
     //save shared workspace separatelly 
 }
