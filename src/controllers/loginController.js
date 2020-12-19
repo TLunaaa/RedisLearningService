@@ -20,6 +20,7 @@ exports.login = async function(req,res,next){
     try{
         console.log(req.body);
         let userData = await loginService.login(req.body);
+        userData.user = req.body.user;
         res.status(200).json(userData);
     }catch(err){
         if(err instanceof InternalError){
