@@ -19,6 +19,9 @@ app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   console.log(req.method + ' ' + req.path);
+  if(req.body != null){
+    console.log(req.body);
+  }
   next();
 })
 
