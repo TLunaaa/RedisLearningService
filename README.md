@@ -14,7 +14,7 @@ Desarrollo de un entorno de aprendizaje de base de datos, mediante la web.
  
 ### Ejecucion:
 
-Nota: es necesario tener instalado y configurado Docker y Docker compose previamente para poder seguir las instrucciones de ejecucion. 
+Nota: es necesario tener instalado y configurado **Docker** y **docker-compose** previamente para poder seguir las instrucciones de ejecucion. 
 ***
   - Clonar repositorio.
   - Posicionarse dentro de la carpeta del proyecto.
