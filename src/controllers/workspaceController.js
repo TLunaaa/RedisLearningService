@@ -1,5 +1,4 @@
-var workspaceService = require("../services/workspaceService");
-
+const workspaceService = require("../services/workspaceService");
 
 exports.executeQuery = async function(req,res,next){
     try{
@@ -11,3 +10,14 @@ exports.executeQuery = async function(req,res,next){
         next(new Error(err));
     }
 };
+
+exports.removeWorkspace = async function(req,res,next){
+    try{
+        let workspaceId = req.params.workspaceId;
+        let user = req.body.user;
+        await workspaceService.deleteWorkspace(workspaceId,user);
+        res.status(200).end();
+    }catch(err){
+        next(new Error(err));
+    }
+}

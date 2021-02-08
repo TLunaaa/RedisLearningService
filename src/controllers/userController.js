@@ -1,6 +1,5 @@
 var userService = require('../services/userService');
 
-
 exports.getWorkspaces = async function(req,res,next){
     try{
         console.log("Fetching workspaces from " + req.params.username);
@@ -13,8 +12,17 @@ exports.getWorkspaces = async function(req,res,next){
 
 exports.createWorkspace = async function(req,res,next){
     try{
-        let worspaceHash = await userService.createWorkspace(req.body,req.body.user);
+        let worspaceHash = await userService.createWorkspace(req.params.username);
         res.status(200).json({workspace : worspaceHash});
+    }catch(err){
+        next(new Error(err));
+    }
+}
+
+exports.addWorkspace = async function(req,res,next){
+    try{
+        let workspaces = await userService.shareWorkspace(req.body.owner,req.params.username,req.body.workspace);
+        res.status(200).json(workspaces);
     }catch(err){
         next(new Error(err));
     }

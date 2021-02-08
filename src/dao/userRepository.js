@@ -68,6 +68,15 @@ exports.saveUserQueriesCounter = function(user,count){
 }
 
 /**
+ * @param {string} user user to save query storage
+ * @param {number} storage 
+ * @returns Promise(err,reply)
+ */
+exports.saveUserQueriesStorage = function(user,storage){
+    return promisify(rediscli.set).bind(rediscli)(['user:' + user + ':queries:storage',storage]);
+}
+
+/**
  * @param {string} user username that owns the workspaces
  * @returns Promise(err,list) 
  */
@@ -85,12 +94,49 @@ exports.decreaseUserQueriesCounter = function(user){
 }
 
 /**
+ * Decrease the size inserted the user query storage
+ * @param {string} user 
+ * @returns Promise(err,reply)
+ */
+exports.decreaseUserQueriesStorage = function(user,size){
+    return promisify(rediscli.get).bind(rediscli)('user:' + user + ':queries:storage')
+        .then(oldSize => {
+            const newSize = oldSize - size;
+            promisify(rediscli.set).bind(rediscli)(['user:' + user + ':queries:storage',newSize]);
+            return newSize;
+        })
+}
+
+/**
+ * Decrease the size inserted the user query storage
+ * @param {string} user 
+ * @returns Promise(err,reply)
+ */
+exports.increaseUserQueriesStorage = function(user,size){
+    return promisify(rediscli.get).bind(rediscli)('user:' + user + ':queries:storage')
+        .then(oldSize => {
+            const newSize = oldSize + size;
+            promisify(rediscli.set).bind(rediscli)(['user:' + user + ':queries:storage',newSize]);
+            return newSize;
+        })
+}
+
+/**
  * Retrieves user queries counter
  * @param {string} user 
  * @returns Promise(err,reply)
  */
 exports.getUserQueriesCounter = function(user){
     return promisify(rediscli.get).bind(rediscli)('user:' + user + ':queries:count');
+}
+
+/**
+ * Retrieves user queries storage
+ * @param {string} user 
+ * @returns Promise(err,reply)
+ */
+exports.getUserQueriesStorage = function(user){
+    return promisify(rediscli.get).bind(rediscli)('user:' + user + ':queries:storage');
 }
 
 /**
@@ -112,6 +158,12 @@ exports.getUserHistory = function(user){
     return promisify(rediscli.lrange).bind(rediscli)('user:' + user + ':queries:history',0,-1);
 }
 
-exports.saveSharedworkspace = function(user,workspaceHash){
-    //save shared workspace separatelly 
+/**
+ * Deletes an user workspace
+ * @param {string} user 
+ * @param {string} workspaceId 
+ * @returns Promise(err,list)
+ */
+exports.deleteWorkspaceById = function(user,workspaceId){
+    return promisify(rediscli.lrem).bind(rediscli)('user:' + user + ':workspaces',0,workspaceId);
 }

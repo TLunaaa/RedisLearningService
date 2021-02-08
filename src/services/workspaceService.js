@@ -1,8 +1,14 @@
 var workspaceRepository = require('../dao/workspaceRepository'),
     userService = require('./userService');
 
-exports.createWorkspace = (workspaceHash, key, value) => {
+exports.createWorkspace = (user,workspaceHash, key, value) => {
+    workspaceRepository.createWorkspace(workspaceHash,user);
     return workspaceRepository.setQuery(workspaceHash, key, value);
+}
+
+exports.deleteWorkspace = async (workspaceHash,user) => { 
+    await userService.deleteWorkspace(user,workspaceHash);
+    workspaceRepository.removeWorkspace(workspaceHash);
 }
 
 exports.executeQuery = async (workspaceId,userId,queryData) => {
@@ -15,6 +21,7 @@ exports.executeQuery = async (workspaceId,userId,queryData) => {
         case "set": 
             // CREATE AND UPDATE
             result = await setKey(workspaceId,queryData.key,queryData.value);
+            await userService.descreaseStorage(userId,queryData)
             break;
         case "get":
             // READ
@@ -25,12 +32,13 @@ exports.executeQuery = async (workspaceId,userId,queryData) => {
             break;
         case "del":
             result = await deleteKey(workspaceId,queryData.key);
+            await userService.releaseStorage(userId,queryData.key,workspaceId);
             break;
     }
     await userService.saveQuery(userId,workspaceId,
         queryData.operation + " " + queryData.key + " " + queryData.value,
         result)
-    return result;
+    return result ;
 }
 
 async function setKey(workspaceId,key,value){

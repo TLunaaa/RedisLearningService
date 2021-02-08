@@ -9,6 +9,8 @@ router.get('/:username/history',userController.userHistory);
 
 router.get('/:username/workspaces',userController.getWorkspaces);
 
-router.patch('/:username/workspaces',userController.createWorkspace);
+router.post('/:username/workspaces',userController.createWorkspace);
+
+router.patch('/:username/workspaces',userController.addWorkspace);
 
 module.exports = router;

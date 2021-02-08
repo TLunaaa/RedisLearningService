@@ -21,7 +21,7 @@ exports.register = async (data) => {
         })
         .catch(e => {
             console.error("LoginService - Error al registrar al usuario");
-            throw new InternalError("Error al registrar al usuario");
+            throw new InternalError("Error al registrar al usuario:" + e);
         }) 
 
 }

@@ -6,7 +6,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon --watch src app.js",
+    "start:dev": "nodemon --watch src app.js",
     "test": "standard"
   },
   "dependencies": {
