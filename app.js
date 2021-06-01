@@ -25,6 +25,10 @@ app.use((req, res, next) => {
   next();
 })
 
+app.get('/health-check', (req, res, next) => {
+  res.status(200).end();
+})
+
 app.use('/',loginRouter);
 app.use('/users',userRouter);
 app.use('/workspaces',workspaceRouter);
@@ -32,6 +36,7 @@ app.use('/workspaces',workspaceRouter);
 app.use((err,req,res,next) => {
   res.status(400).json({message: err.message }).end();
 });
+
 
 const startServer = async () => {
   const port = process.env.SERVER_PORT || 3000
